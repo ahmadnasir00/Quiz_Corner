@@ -3,7 +3,6 @@ from datetime import datetime
 
 
 def populate_database():
-    """Populates the existing database with system quizzes."""
     conn = sqlite3.connect('instance/quiz.db')
     cursor = conn.cursor()
 

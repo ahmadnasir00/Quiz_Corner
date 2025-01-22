@@ -32,7 +32,7 @@ class Quiz(db.Model):
     description = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     is_system_quiz = db.Column(db.Boolean, default=False)
-    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    status = db.Column(db.String(20), default='pending')
     
     # Use cascade to automatically delete related records
     questions = db.relationship('Question', 

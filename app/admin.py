@@ -11,7 +11,6 @@ def admin_dashboard():
         flash('Access denied')
         return redirect(url_for('main.home'))
     
-    # Get pending quizzes
     pending_quizzes = Quiz.query.filter_by(status='pending').all()
     # Get all users
     users = User.query.all()

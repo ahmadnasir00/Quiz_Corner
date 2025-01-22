@@ -5,7 +5,7 @@ import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-login_manager.login_view = 'main.login'  # Specify the login view
+login_manager.login_view = 'main.login'
 
 def create_app():
     base_dir = os.path.abspath(os.path.dirname(__file__))

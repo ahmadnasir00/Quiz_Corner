@@ -13,7 +13,6 @@ def create_quiz():
         title = request.form['title']
         description = request.form['description']
         
-        # Create quiz associated with current user
         new_quiz = Quiz(
             title=title, 
             description=description, 

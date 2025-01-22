@@ -42,7 +42,6 @@
     </div>
 
     {% if current_user.is_authenticated %}
-        {# System Quizzes #}
         {% set system_quizzes = Quiz.query.filter_by(is_system_quiz=True).all() %}
         {% if system_quizzes %}
             <h2 class="mb-4">Available Quizzes</h2>
