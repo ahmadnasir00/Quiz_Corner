@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Quiz Result</h2>
+    <p>Quiz: {{ quiz.title }}</p>
+    <p>Your Score: {{ score }}/{{ total_questions }}</p>
+    
+    <div class="quiz-review">
+        <h3>Quiz Review</h3>
+        {% for question in quiz.questions %}
+        <div class="question-review">
+            <p><strong>{{ question.text }}</strong></p>
+            {% for choice in question.choices %}
+                {% if choice.is_correct %}
+                    <p class="correct-answer">Correct Answer: {{ choice.text }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="result-actions">
+        <a href="{{ url_for('main.home') }}" class="btn">Back to Home</a>
+        <a href="{{ url_for('main.leaderboard') }}" class="btn">View Leaderboard</a>
+    </div>
+</div>
+
+<style>
+.quiz-review {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f4f4f4;
+}
+
+.question-review {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.correct-answer {
+    color: green;
+    font-weight: bold;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ quiz.title }}</h2>
+    <p>{{ quiz.description }}</p>
+    {% if already_taken %}
+    <div class="quiz-taken-warning">
+        <p>You have already taken this quiz. You can retake it, but won't earn additional points.</p>
+    </div>
+    {% endif %}
+    <form method="POST" class="quiz-form">
+        <div class="quiz-questions-container">
+            {% for question in questions %}
+            <div class="quiz-question">
+                <h3>Question {{ loop.index }}</h3>
+                <p>{{ question.text }}</p>
+                <div class="quiz-choices">
+                    {% for choice in question.choices %}
+                    <label class="choice-label">
+                        <input type="radio" 
+                               name="question_{{ question.id }}" 
+                               value="{{ choice.id }}"
+                               required>
+                        {{ choice.text }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="submit-quiz-btn">Submit Quiz</button>
+    </form>
+</div>
+
+<style>
+.quiz-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.quiz-questions-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.quiz-question {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.quiz-choices {
+    display: flex;
+    flex-direction: column;
+}
+
+.choice-label {
+    margin-bottom: 10px;
+}
+
+.submit-quiz-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.submit-quiz-btn:hover {
+    background-color: #45a049;
+}
+</style>
+{% endblock %}
