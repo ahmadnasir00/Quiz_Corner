@@ -34,7 +34,7 @@ class Quiz(db.Model):
     is_system_quiz = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default='pending')
     
-    # Use cascade to automatically delete related records
+    # delete all related record
     questions = db.relationship('Question', 
                                 backref='quiz', 
                                 lazy='dynamic', 
@@ -49,7 +49,7 @@ class Question(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id', ondelete='CASCADE'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     
-    # Use cascade to automatically delete related choices
+    # delete all related choices
     choices = db.relationship('QuestionChoice', 
                               backref='question', 
                               lazy='dynamic', 

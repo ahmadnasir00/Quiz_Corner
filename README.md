@@ -24,4 +24,5 @@ A simple quiz application built with Flask, SQLAlchemy, and Flask-Login.
     pip install -r requirements.txt
 4. Run the app:
     ```sh
+    python setup_admin.py && python create_quiz_db.py
     python run.py
