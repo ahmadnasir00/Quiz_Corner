@@ -5,7 +5,7 @@ import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-login_manager.login_view = 'main.login'  # Specify the login view
+login_manager.login_view = 'main.login'
 
 def create_app():
     base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -25,7 +25,9 @@ def create_app():
     from .models import User  # Ensure User model is imported
 
     from .app import main_blueprint
+    from .admin import admin_blueprint
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(admin_blueprint)
 
     with app.app_context():
         db.create_all()

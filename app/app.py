@@ -13,12 +13,12 @@ def create_quiz():
         title = request.form['title']
         description = request.form['description']
         
-        # Create quiz associated with current user
         new_quiz = Quiz(
             title=title, 
             description=description, 
             user_id=current_user.id,
-            is_system_quiz=False
+            is_system_quiz=False,
+            status='pending'
         )
         db.session.add(new_quiz)
         db.session.commit()
@@ -165,14 +165,34 @@ def delete_quiz(quiz_id):
 @main_blueprint.route('/leaderboard')
 def leaderboard():
     # Get users sorted by their score in descending order
-    top_users = User.query.order_by(User.score.desc()).limit(10).all()
+    top_users = User.query.filter_by(is_admin=False).order_by(User.score.desc()).limit(10).all()
     
     return render_template('leaderboard.html', top_users=top_users)
 
 @main_blueprint.route('/')
 def home():
-    quizzes = Quiz.query.all()
-    return render_template('home.html', Quiz=Quiz)
+    # Get system quizzes
+    system_quizzes = Quiz.query.filter_by(is_system_quiz=True).all()
+    
+    # Get user's approved quizzes
+    user_quizzes = []
+    if current_user.is_authenticated:
+        user_quizzes = Quiz.query.filter_by(
+            user_id=current_user.id,
+            status='approved'
+        ).all()
+    
+    # Get all approved quizzes from all users
+    all_quizzes = Quiz.query.filter_by(
+        status='approved',
+        is_system_quiz=False
+    ).all()
+    
+    return render_template('home.html',
+                         system_quizzes=system_quizzes,
+                         user_quizzes=user_quizzes,
+                         all_quizzes=all_quizzes,
+                         Quiz=Quiz)
 
 @main_blueprint.route('/register', methods=['GET', 'POST'])
 def register():

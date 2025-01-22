@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4 fade-in">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Pending Quizzes</h2>
+            {% if pending_quizzes %}
+                <div class="list-group">
+                    {% for quiz in pending_quizzes %}
+                    <div class="list-group-item">
+                        <h5>{{ quiz.title }}</h5>
+                        <p>{{ quiz.description }}</p>
+                        <div class="btn-group">
+                            <a href="{{ url_for('admin.approve_quiz', quiz_id=quiz.id) }}" 
+                               class="btn btn-success btn-sm">
+                                Approve
+                            </a>
+                            <a href="{{ url_for('admin.reject_quiz', quiz_id=quiz.id) }}" 
+                               class="btn btn-danger btn-sm">
+                                Reject
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No pending quizzes</div>
+            {% endif %}
+        </div>
+
+        <!-- User Management Section -->
+        <div class="col-md-6">
+            <h2>User Management</h2>
+            {% if users %}
+                <div class="list-group">
+                    {% for user in users %}
+                    <div class="list-group-item">
+                        <h5>{{ user.username }}</h5>
+                        <p>{{ user.email }}</p>
+                        <div class="btn-group">
+                            <a href="{{ url_for('admin.reset_password', user_id=user.id) }}" 
+                               class="btn btn-warning btn-sm">
+                                Reset Password
+                            </a>
+                            <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" 
+                               class="btn btn-danger btn-sm">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No users found</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

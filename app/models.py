@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     score = db.Column(db.Integer, default=0)
+    is_admin = db.Column(db.Boolean, default=False)
     quizzes_taken = db.relationship('QuizResult', backref='user', lazy='dynamic')
 
     def set_password(self, password):
@@ -31,6 +32,7 @@ class Quiz(db.Model):
     description = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     is_system_quiz = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(20), default='pending')
     
     # Use cascade to automatically delete related records
     questions = db.relationship('Question', 
