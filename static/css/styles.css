@@ -1,52 +1,93 @@
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-    padding: 20px;
+main {
+    flex: 1;
 }
 
-nav {
-    background: #333;
-    color: #fff;
-    padding: 10px;
+/* Custom Navbar */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin-right: 10px;
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
-form {
-    background: #f4f4f4;
-    padding: 20px;
-    margin-top: 20px;
+/* Quiz Cards */
+.quiz-card {
+    transition: transform 0.2s ease-in-out;
+    height: 100%;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+.quiz-card:hover {
+    transform: translateY(-5px);
 }
 
-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background: #333;
-    color: #fff;
-    border: none;
+.quiz-card .card-body {
+    display: flex;
+    flex-direction: column;
 }
 
-.flashes {
-    background: #f4f4f4;
-    padding: 10px;
-    margin-bottom: 20px;
+.quiz-card .card-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Forms */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .quiz-card .card-actions {
+        flex-direction: column;
+    }
+    
+    .form-container {
+        padding: 1rem;
+    }
 }

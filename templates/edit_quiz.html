@@ -1,18 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2>Edit Quiz</h2>
-    <form method="POST">
-        <div>
-            <label>Quiz Title</label>
-            <input type="text" name="title" value="{{ quiz.title }}" required>
+<div class="container my-4 fade-in">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Edit Quiz</h2>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Quiz Title</label>
+                    <input type="text" class="form-control" name="title" value="{{ quiz.title }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" name="description" rows="3">{{ quiz.description }}</textarea>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Update Quiz
+                    </button>
+                </div>
+            </form>
         </div>
-        <div>
-            <label>Description</label>
-            <textarea name="description">{{ quiz.description }}</textarea>
-        </div>
-        <button type="submit">Update Quiz</button>
-    </form>
+    </div>
 </div>
 {% endblock %}

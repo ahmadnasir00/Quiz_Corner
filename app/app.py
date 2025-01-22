@@ -181,8 +181,14 @@ def register():
         email = request.form['email']
         password = request.form['password']
         
+        # Check if username exists
         if User.query.filter_by(username=username).first():
             flash('Username already exists')
+            return redirect(url_for('main.register'))
+            
+        # Check if email exists
+        if User.query.filter_by(email=email).first():
+            flash('Email address already registered')
             return redirect(url_for('main.register'))
         
         new_user = User(username=username, email=email)

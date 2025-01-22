@@ -1,52 +1,78 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2>Create Quiz</h2>
-    <form method="POST">
-        <div>
-            <label>Quiz Title</label>
-            <input type="text" name="title" required>
-        </div>
-        <div>
-            <label>Description</label>
-            <textarea name="description"></textarea>
-        </div>
-        
-        <div id="questions-container">
-            <div class="question-group" data-question-index="0">
-                <h3>Question 1</h3>
-                <div>
-                    <label>Question Text</label>
-                    <input type="text" name="question" required>
+<div class="container my-4 fade-in">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Create Quiz</h2>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Quiz Title</label>
+                    <input type="text" class="form-control" name="title" required>
                 </div>
-                <div class="choices-container">
-                    <div class="choice-group">
-                        <input type="text" name="choices_0" placeholder="Choice 1" required>
-                        <input type="radio" name="correct_choice_0" value="0" required>
-                        <label>Correct Answer</label>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" name="description" rows="3"></textarea>
+                </div>
+        
+        <div id="questions-container" class="mb-4">
+            <div class="card mb-3" data-question-index="0">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Question 1</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Question Text</label>
+                        <input type="text" class="form-control" name="question" required>
                     </div>
-                    <div class="choice-group">
-                        <input type="text" name="choices_0" placeholder="Choice 2" required>
-                        <input type="radio" name="correct_choice_0" value="1" required>
-                        <label>Correct Answer</label>
-                    </div>
-                    <div class="choice-group">
-                        <input type="text" name="choices_0" placeholder="Choice 3" required>
-                        <input type="radio" name="correct_choice_0" value="2" required>
-                        <label>Correct Answer</label>
-                    </div>
-                    <div class="choice-group">
-                        <input type="text" name="choices_0" placeholder="Choice 4" required>
-                        <input type="radio" name="correct_choice_0" value="3" required>
-                        <label>Correct Answer</label>
+                    <div class="choices-container">
+                        <div class="mb-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="choices_0" placeholder="Choice 1" required>
+                                <div class="input-group-text">
+                                    <input type="radio" class="form-check-input" name="correct_choice_0" value="0" required>
+                                    <label class="form-check-label ms-2">Correct</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="choices_0" placeholder="Choice 2" required>
+                                <div class="input-group-text">
+                                    <input type="radio" class="form-check-input" name="correct_choice_0" value="1" required>
+                                    <label class="form-check-label ms-2">Correct</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="choices_0" placeholder="Choice 3" required>
+                                <div class="input-group-text">
+                                    <input type="radio" class="form-check-input" name="correct_choice_0" value="2" required>
+                                    <label class="form-check-label ms-2">Correct</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="choices_0" placeholder="Choice 4" required>
+                                <div class="input-group-text">
+                                    <input type="radio" class="form-check-input" name="correct_choice_0" value="3" required>
+                                    <label class="form-check-label ms-2">Correct</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <button type="button" id="add-question">Add Another Question</button>
-        <button type="submit">Create Quiz</button>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="button" id="add-question" class="btn btn-secondary me-md-2">
+                <i class="bi bi-plus-circle"></i> Add Another Question
+            </button>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Create Quiz
+            </button>
+        </div>
     </form>
 </div>
 
@@ -60,31 +86,49 @@ document.getElementById('add-question').addEventListener('click', function() {
     newQuestionGroup.setAttribute('data-question-index', questionIndex);
     
     newQuestionGroup.innerHTML = `
-        <h3>Question ${questionIndex + 1}</h3>
-        <div>
-            <label>Question Text</label>
-            <input type="text" name="question" required>
-        </div>
-        <div class="choices-container">
-            <div class="choice-group">
-                <input type="text" name="choices_${questionIndex}" placeholder="Choice 1" required>
-                <input type="radio" name="correct_choice_${questionIndex}" value="0" required>
-                <label>Correct Answer</label>
+        <div class="card-body">
+            <h3 class="card-title mb-3">Question ${questionIndex + 1}</h3>
+            <div class="mb-3">
+                <label class="form-label">Question Text</label>
+                <input type="text" class="form-control" name="question" required>
             </div>
-            <div class="choice-group">
-                <input type="text" name="choices_${questionIndex}" placeholder="Choice 2" required>
-                <input type="radio" name="correct_choice_${questionIndex}" value="1" required>
-                <label>Correct Answer</label>
-            </div>
-            <div class="choice-group">
-                <input type="text" name="choices_${questionIndex}" placeholder="Choice 3" required>
-                <input type="radio" name="correct_choice_${questionIndex}" value="2" required>
-                <label>Correct Answer</label>
-            </div>
-            <div class="choice-group">
-                <input type="text" name="choices_${questionIndex}" placeholder="Choice 4" required>
-                <input type="radio" name="correct_choice_${questionIndex}" value="3" required>
-                <label>Correct Answer</label>
+            <div class="choices-container">
+                <div class="mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="choices_${questionIndex}" placeholder="Choice 1" required>
+                        <div class="input-group-text">
+                            <input type="radio" class="form-check-input" name="correct_choice_${questionIndex}" value="0" required>
+                            <label class="form-check-label ms-2">Correct</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="choices_${questionIndex}" placeholder="Choice 2" required>
+                        <div class="input-group-text">
+                            <input type="radio" class="form-check-input" name="correct_choice_${questionIndex}" value="1" required>
+                            <label class="form-check-label ms-2">Correct</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="choices_${questionIndex}" placeholder="Choice 3" required>
+                        <div class="input-group-text">
+                            <input type="radio" class="form-check-input" name="correct_choice_${questionIndex}" value="2" required>
+                            <label class="form-check-label ms-2">Correct</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="choices_${questionIndex}" placeholder="Choice 4" required>
+                        <div class="input-group-text">
+                            <input type="radio" class="form-check-input" name="correct_choice_${questionIndex}" value="3" required>
+                            <label class="form-check-label ms-2">Correct</label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -95,21 +139,34 @@ document.getElementById('add-question').addEventListener('click', function() {
 </script>
 
 <style>
-.question-group {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
 }
 
-.choice-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.choice-group input[type="text"] {
-    flex-grow: 1;
-    margin-right: 10px;
+.quiz-card {
+    transition: transform 0.2s ease;
+}
+
+.quiz-card:hover {
+    transform: translateY(-5px);
+}
+
+.input-group-text {
+    background-color: transparent;
+    border-left: none;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 </style>
 {% endblock %}
