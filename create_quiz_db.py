@@ -122,5 +122,5 @@ def populate_database():
     print("Database populated with system quizzes successfully!")
 
 
-if __name__ == "__main__":
-    populate_database()
+# if __name__ == "__main__":
+#     populate_database()
