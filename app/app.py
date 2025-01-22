@@ -18,7 +18,8 @@ def create_quiz():
             title=title, 
             description=description, 
             user_id=current_user.id,
-            is_system_quiz=False
+            is_system_quiz=False,
+            status='pending'
         )
         db.session.add(new_quiz)
         db.session.commit()

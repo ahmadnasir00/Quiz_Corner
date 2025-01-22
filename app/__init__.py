@@ -25,7 +25,9 @@ def create_app():
     from .models import User  # Ensure User model is imported
 
     from .app import main_blueprint
+    from .admin import admin_blueprint
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(admin_blueprint)
 
     with app.app_context():
         db.create_all()
