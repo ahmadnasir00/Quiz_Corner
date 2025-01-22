@@ -15,7 +15,7 @@ def create_app():
                 template_folder=os.path.join(project_root, 'templates'),
                 static_folder=os.path.join(project_root, 'static'))
     
-    app.config['SECRET_KEY'] = 'your_secret_key'
+    app.config['SECRET_KEY'] = 'fsdalwlkqrlkwqrlkwq'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///quiz.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
