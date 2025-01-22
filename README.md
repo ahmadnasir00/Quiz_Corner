@@ -13,8 +13,8 @@ A simple quiz application built with Flask, SQLAlchemy, and Flask-Login.
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/flask-quiz-app.git
-   cd flask-quiz-app
+   git clone https://github.com/ahmadnasir00/Quiz_Corner.git
+   cd Quiz_Corner
 2. Create a virtual environment and activate it:
    ```sh
    python -m venv venv
