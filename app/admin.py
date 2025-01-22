@@ -41,9 +41,9 @@ def reject_quiz(quiz_id):
         return redirect(url_for('main.home'))
     
     quiz = Quiz.query.get_or_404(quiz_id)
-    quiz.status = 'rejected'
+    db.session.delete(quiz)
     db.session.commit()
-    flash('Quiz rejected')
+    flash('Quiz deleted')
     return redirect(url_for('admin.admin_dashboard'))
 
 @admin_blueprint.route('/admin/delete_user/<int:user_id>')
