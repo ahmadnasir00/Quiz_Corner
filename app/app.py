@@ -1,9 +1,74 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User, Quiz, Question, QuestionChoice, QuizResult, db
+from authlib.integrations.flask_client import OAuth
 import random
+import os
+
+# Initialize OAuth
+oauth = OAuth()
+
+def init_oauth(app):
+    oauth.init_app(app)
+    google = oauth.register(
+        name='google',
+        client_id="501602680733-kll08lan2nqp6at4bkcrp1m5c8do5k2l.apps.googleusercontent.com",
+        client_secret="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",
+        access_token_url='https://accounts.google.com/o/oauth2/token',
+        access_token_params=None,
+        authorize_url='https://accounts.google.com/o/oauth2/auth',
+        authorize_params=None,
+        api_base_url='https://www.googleapis.com/userinfo/v2/me',
+        client_kwargs={'scope': 'openid email profile'},
+    )
 
 main_blueprint = Blueprint('main', __name__)
+
+@main_blueprint.route('/login/google')
+def google_login():
+    redirect_uri = url_for('main.google_authorize', _external=True).replace('127.0.0.1', 'localhost')
+    # Generate and store state parameter in session
+    state = os.urandom(16).hex()
+    session['oauth_state'] = state
+    return oauth.google.authorize_redirect(redirect_uri, state=state)
+
+@main_blueprint.route('/login/google/authorize')
+def google_authorize():
+    # Verify state parameter matches
+    if 'oauth_state' not in session or request.args.get('state') != session.pop('oauth_state'):
+        flash('Invalid state parameter. Please try logging in again.', 'error')
+        return redirect(url_for('main.login'))
+        
+    token = oauth.google.authorize_access_token()
+    if not token:
+        flash('Google login failed. Please try again.', 'error')
+        return redirect(url_for('main.login'))
+    
+    userinfo = oauth.google.parse_id_token(token)
+    if not userinfo:
+        flash('Failed to get user info from Google.', 'error')
+        return redirect(url_for('main.login'))
+    
+    google_id = userinfo['sub']
+    email = userinfo['email']
+    name = userinfo.get('name', email.split('@')[0])
+    
+    # Check if user exists by Google ID
+    user = User.get_by_google_id(google_id)
+    if not user:
+        # Check if user exists by email
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # Update existing user with Google ID
+            user.google_id = google_id
+            db.session.commit()
+        else:
+            # Create new user
+            user = User.create_from_google(google_id, email, name)
+    
+    login_user(user)
+    flash('Logged in successfully with Google!', 'success')
+    return redirect(url_for('main.home'))
 
 
 @main_blueprint.route('/create_quiz', methods=['GET', 'POST'])
@@ -120,12 +185,115 @@ def edit_quiz(quiz_id):
         return redirect(url_for('main.home'))
     
     if request.method == 'POST':
-        # Update quiz logic
-        quiz.title = request.form['title']
-        quiz.description = request.form['description']
-        db.session.commit()
-        flash('Quiz updated successfully!')
-        return redirect(url_for('main.home'))
+        try:
+            # Update quiz info
+            quiz.title = request.form['title']
+            quiz.description = request.form['description']
+            
+            # Process questions
+            question_index = 0
+            while True:
+                question_text = request.form.get(f'questions[{question_index}][text]')
+                if not question_text:
+                    break
+                
+                # Get existing question ID or create new
+                question_id = request.form.get(f'questions[{question_index}][id]')
+                if question_id:
+                    # Update existing question
+                    question = Question.query.get(question_id)
+                    question.text = question_text
+                else:
+                    # Add new question
+                    question = Question(
+                        quiz_id=quiz.id,
+                        text=question_text
+                    )
+                    db.session.add(question)
+                    db.session.flush()
+                
+                # Process choices
+                choice_index = 0
+                while True:
+                    choice_text = request.form.get(f'questions[{question_index}][choices][{choice_index}][text]')
+                    if not choice_text:
+                        break
+                    
+                    # Get existing choice ID or create new
+                    choice_id = request.form.get(f'questions[{question_index}][choices][{choice_index}][id]')
+                    correct_choice = request.form.get(f'questions[{question_index}][correct_choice]')
+                    
+                    if choice_id:
+                        # Update existing choice
+                        choice = QuestionChoice.query.get(choice_id)
+                        choice.text = choice_text
+                        choice.is_correct = (str(choice_index) == correct_choice)
+                    else:
+                        # Add new choice
+                        new_choice = QuestionChoice(
+                            question_id=question.id,
+                            text=choice_text,
+                            is_correct=(str(choice_index) == correct_choice)
+                        )
+                        db.session.add(new_choice)
+                    
+                    choice_index += 1
+                
+                question_index += 1
+            
+            # Delete removed questions
+            existing_question_ids = [q.id for q in quiz.questions]
+            updated_question_ids = [
+                int(qid) for qid in request.form.getlist('existing_questions[]')
+                if qid
+            ]
+            
+            # Delete questions that were removed
+            for qid in existing_question_ids:
+                if qid not in updated_question_ids:
+                    # First delete all choices for this question
+                    QuestionChoice.query.filter_by(question_id=qid).delete()
+                    # Then delete the question itself
+                    Question.query.filter_by(id=qid).delete()
+            
+            # Delete removed choices
+            for question in quiz.questions:
+                if question.id in updated_question_ids:
+                    existing_choice_ids = [c.id for c in question.choices]
+                    # Get updated choice IDs from form data
+                    updated_choice_ids = []
+                    question_index = updated_question_ids.index(question.id)
+                    choice_index = 0
+                    while True:
+                        choice_id = request.form.get(
+                            f'questions[{question_index}][choices][{choice_index}][id]'
+                        )
+                        if not choice_id:
+                            break
+                        updated_choice_ids.append(int(choice_id))
+                        choice_index += 1
+                    
+                    # Delete choices that were removed
+                    for cid in existing_choice_ids:
+                        if cid not in updated_choice_ids:
+                            QuestionChoice.query.filter_by(id=cid).delete()
+                    
+                    # If all choices were removed, add a default choice
+                    if choice_index == 0:
+                        default_choice = QuestionChoice(
+                            question_id=question.id,
+                            text="Default Choice",
+                            is_correct=True
+                        )
+                        db.session.add(default_choice)
+            
+            db.session.commit()
+            flash('Quiz updated successfully!', 'success')
+            return redirect(url_for('main.take_quiz', quiz_id=quiz.id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating quiz: {str(e)}', 'error')
+            return redirect(url_for('main.edit_quiz', quiz_id=quiz_id))
     
     return render_template('edit_quiz.html', quiz=quiz)
 

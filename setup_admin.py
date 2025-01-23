@@ -1,6 +1,6 @@
 from app import create_app
 from app.models import User, db
-
+from create_quiz_db import populate_database
 app = create_app()
 
 def create_admin():
@@ -23,4 +23,5 @@ def create_admin():
         print("Admin user created successfully")
 
 if __name__ == '__main__':
+    populate_database()
     create_admin()

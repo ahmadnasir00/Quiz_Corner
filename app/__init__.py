@@ -24,10 +24,13 @@ def create_app():
 
     from .models import User  # Ensure User model is imported
 
-    from .app import main_blueprint
+    from .app import main_blueprint, init_oauth
     from .admin import admin_blueprint
     app.register_blueprint(main_blueprint)
     app.register_blueprint(admin_blueprint)
+    
+    # Initialize OAuth
+    init_oauth(app)
 
     with app.app_context():
         db.create_all()

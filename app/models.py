@@ -11,9 +11,25 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    google_id = db.Column(db.String(255), unique=True, nullable=True)
     score = db.Column(db.Integer, default=0)
     is_admin = db.Column(db.Boolean, default=False)
     quizzes_taken = db.relationship('QuizResult', backref='user', lazy='dynamic')
+
+    @classmethod
+    def get_by_google_id(cls, google_id):
+        return cls.query.filter_by(google_id=google_id).first()
+
+    @classmethod
+    def create_from_google(cls, google_id, email, name):
+        user = cls(
+            username=name,
+            email=email,
+            google_id=google_id
+        )
+        db.session.add(user)
+        db.session.commit()
+        return user
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
