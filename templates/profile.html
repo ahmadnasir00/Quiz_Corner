@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-4">Profile Settings</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Edit Profile</h2>
+                    <form method="POST" action="{{ url_for('main.profile') }}">
+                        {{ profile_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ profile_form.username.label(class="form-label") }}
+                            {{ profile_form.username(class="form-control") }}
+                            {% if profile_form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in profile_form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Change Password</h2>
+                    <form method="POST" action="{{ url_for('main.change_password') }}">
+                        {{ password_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ password_form.current_password.label(class="form-label") }}
+                            {{ password_form.current_password(class="form-control" + (' is-invalid' if password_form.current_password.errors else '')) }}
+                            {% if password_form.current_password.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in password_form.current_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ password_form.new_password.label(class="form-label") }}
+                            {{ password_form.new_password(class="form-control" + (' is-invalid' if password_form.new_password.errors else '')) }}
+                            {% if password_form.new_password.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in password_form.new_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ password_form.confirm_password.label(class="form-label") }}
+                            {{ password_form.confirm_password(class="form-control" + (' is-invalid' if password_form.confirm_password.errors else '')) }}
+                            {% if password_form.confirm_password.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in password_form.confirm_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

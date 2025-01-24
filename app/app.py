@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import login_user, login_required, logout_user, current_user
+from .forms import ProfileForm, ChangePasswordForm
 from .models import User, Quiz, Question, QuestionChoice, QuizResult, db
 from authlib.integrations.flask_client import OAuth
 import random
@@ -301,6 +302,50 @@ def login():
         flash('Invalid username or password')
     
     return render_template('login.html')
+
+@main_blueprint.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = ProfileForm(obj=current_user)
+    
+    if form.validate_on_submit():
+        new_username = form.username.data
+        
+        # Check if username is already taken
+        if new_username != current_user.username and \
+           User.query.filter_by(username=new_username).first():
+            flash('Username already taken')
+            return redirect(url_for('main.profile'))
+            
+        current_user.username = new_username
+        db.session.commit()
+        flash('Profile updated successfully')
+        return redirect(url_for('main.profile'))
+    
+    return render_template('profile.html',
+                         profile_form=ProfileForm(obj=current_user),
+                         password_form=ChangePasswordForm())
+
+@main_blueprint.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    
+    if form.validate_on_submit():
+        # Verify current password
+        if not current_user.check_password(form.current_password.data):
+            flash('Current password is incorrect')
+            return redirect(url_for('main.change_password'))
+            
+        # Update password
+        current_user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Password changed successfully')
+        return redirect(url_for('main.profile'))
+    
+    return render_template('profile.html',
+                         profile_form=ProfileForm(obj=current_user),
+                         password_form=form)
 
 @main_blueprint.route('/logout')
 @login_required
