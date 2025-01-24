@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-{{ super() }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-{% endblock %}
-
 {% block content %}
 <div class="container my-4 fade-in">
     <div class="card">
@@ -19,64 +14,6 @@
                     <label class="form-label">Description</label>
                     <textarea class="form-control" name="description" rows="3">{{ quiz.description }}</textarea>
                 </div>
-
-                <div class="mb-4">
-                    <h4>Questions</h4>
-                    <div id="questions-container">
-                        {% for question in quiz.questions %}
-                        <div class="question-section card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="card-title">Question {{ loop.index }}</h5>
-                                    <button type="button" class="btn btn-danger delete-question-btn" title="Delete Question">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </div>
-                                <input type="hidden" name="questions[{{ loop.index0 }}][id]" value="{{ question.id }}">
-                                <input type="hidden" name="existing_questions[]" value="{{ question.id }}">
-                                <div class="mb-3">
-                                    <label class="form-label">Question Text</label>
-                                    <textarea class="form-control question-text" 
-                                              name="questions[{{ loop.index0 }}][text]" 
-                                              required>{{ question.text }}</textarea>
-                                </div>
-                                <div class="choices-container mb-3">
-                                    <div class="choices-list">
-                                        {% set question_index = loop.index0 %}
-                                        {% for choice in question.choices %}
-                                        <div class="choice-item mb-2">
-                                            <div class="input-group">
-                                                <input type="hidden" name="questions[{{ question_index }}][choices][{{ loop.index0 }}][id]" value="{{ choice.id }}">
-                                                <input type="text" class="form-control" 
-                                                       name="questions[{{ question_index }}][choices][{{ loop.index0 }}][text]" 
-                                                       value="{{ choice.text }}" 
-                                                       placeholder="Choice text" required>
-                                                <div class="input-group-text">
-                                                    <input class="form-check-input" type="radio" 
-                                                           name="questions[{{ question_index }}][correct_choice]" 
-                                                           value="{{ loop.index0 }}" 
-                                                           {% if choice.is_correct %}checked{% endif %} required>
-                                                </div>
-                                                <button type="button" class="btn btn-danger delete-choice-btn" title="Delete Choice">
-                                                    <i class="bi bi-trash3-fill"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                    <button type="button" class="btn btn-success add-choice-btn">
-                                        <i class="bi bi-plus-circle-fill"></i> Add Choice
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button type="button" id="add-question-btn" class="btn btn-primary btn-lg">
-                        <i class="bi bi-plus-circle-fill"></i> Add New Question
-                    </button>
-                </div>
-
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-save"></i> Update Quiz
@@ -86,6 +23,4 @@
         </div>
     </div>
 </div>
-
-<script src="{{ url_for('static', filename='js/quiz_editor.js') }}"></script>
 {% endblock %}
