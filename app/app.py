@@ -151,9 +151,9 @@ def take_quiz(quiz_id):
         )
         db.session.add(result)
         
-        # Award points only if:
-        # 1. User hasn't taken this quiz before
-        # 2. User got at least 50% correct
+        
+        
+        # Award points only if: User hasn't taken this quiz before n user got at least 50% correct
         if not existing_result and score_percentage >= 50:
             current_user.score += 1
         
@@ -185,115 +185,12 @@ def edit_quiz(quiz_id):
         return redirect(url_for('main.home'))
     
     if request.method == 'POST':
-        try:
-            # Update quiz info
-            quiz.title = request.form['title']
-            quiz.description = request.form['description']
-            
-            # Process questions
-            question_index = 0
-            while True:
-                question_text = request.form.get(f'questions[{question_index}][text]')
-                if not question_text:
-                    break
-                
-                # Get existing question ID or create new
-                question_id = request.form.get(f'questions[{question_index}][id]')
-                if question_id:
-                    # Update existing question
-                    question = Question.query.get(question_id)
-                    question.text = question_text
-                else:
-                    # Add new question
-                    question = Question(
-                        quiz_id=quiz.id,
-                        text=question_text
-                    )
-                    db.session.add(question)
-                    db.session.flush()
-                
-                # Process choices
-                choice_index = 0
-                while True:
-                    choice_text = request.form.get(f'questions[{question_index}][choices][{choice_index}][text]')
-                    if not choice_text:
-                        break
-                    
-                    # Get existing choice ID or create new
-                    choice_id = request.form.get(f'questions[{question_index}][choices][{choice_index}][id]')
-                    correct_choice = request.form.get(f'questions[{question_index}][correct_choice]')
-                    
-                    if choice_id:
-                        # Update existing choice
-                        choice = QuestionChoice.query.get(choice_id)
-                        choice.text = choice_text
-                        choice.is_correct = (str(choice_index) == correct_choice)
-                    else:
-                        # Add new choice
-                        new_choice = QuestionChoice(
-                            question_id=question.id,
-                            text=choice_text,
-                            is_correct=(str(choice_index) == correct_choice)
-                        )
-                        db.session.add(new_choice)
-                    
-                    choice_index += 1
-                
-                question_index += 1
-            
-            # Delete removed questions
-            existing_question_ids = [q.id for q in quiz.questions]
-            updated_question_ids = [
-                int(qid) for qid in request.form.getlist('existing_questions[]')
-                if qid
-            ]
-            
-            # Delete questions that were removed
-            for qid in existing_question_ids:
-                if qid not in updated_question_ids:
-                    # First delete all choices for this question
-                    QuestionChoice.query.filter_by(question_id=qid).delete()
-                    # Then delete the question itself
-                    Question.query.filter_by(id=qid).delete()
-            
-            # Delete removed choices
-            for question in quiz.questions:
-                if question.id in updated_question_ids:
-                    existing_choice_ids = [c.id for c in question.choices]
-                    # Get updated choice IDs from form data
-                    updated_choice_ids = []
-                    question_index = updated_question_ids.index(question.id)
-                    choice_index = 0
-                    while True:
-                        choice_id = request.form.get(
-                            f'questions[{question_index}][choices][{choice_index}][id]'
-                        )
-                        if not choice_id:
-                            break
-                        updated_choice_ids.append(int(choice_id))
-                        choice_index += 1
-                    
-                    # Delete choices that were removed
-                    for cid in existing_choice_ids:
-                        if cid not in updated_choice_ids:
-                            QuestionChoice.query.filter_by(id=cid).delete()
-                    
-                    # If all choices were removed, add a default choice
-                    if choice_index == 0:
-                        default_choice = QuestionChoice(
-                            question_id=question.id,
-                            text="Default Choice",
-                            is_correct=True
-                        )
-                        db.session.add(default_choice)
-            
-            db.session.commit()
-            flash('Quiz updated successfully!', 'success')
-            return redirect(url_for('main.take_quiz', quiz_id=quiz.id))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error updating quiz: {str(e)}', 'error')
-            return redirect(url_for('main.edit_quiz', quiz_id=quiz_id))
+        # Update quiz logic
+        quiz.title = request.form['title']
+        quiz.description = request.form['description']
+        db.session.commit()
+        flash('Quiz updated successfully!')
+        return redirect(url_for('main.home'))
     
     return render_template('edit_quiz.html', quiz=quiz)
 
