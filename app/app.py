@@ -151,9 +151,9 @@ def take_quiz(quiz_id):
         )
         db.session.add(result)
         
-        # Award points only if:
-        # 1. User hasn't taken this quiz before
-        # 2. User got at least 50% correct
+        
+        
+        # Award points only if: User hasn't taken this quiz before n user got at least 50% correct
         if not existing_result and score_percentage >= 50:
             current_user.score += 1
         
